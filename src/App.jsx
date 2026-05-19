@@ -1,13 +1,31 @@
-import './App.css'
-import logo from './assets/logo-white.png'
+import "./App.css";
+
+import { Link } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+
+import Navbar from "./components/Navbar/Navbar";
+
+import Home from "./pages/Home/Home";
+import NotFound from "./pages/404/404";
+import NewPost from "./pages/NewPost/NewPost";
+import Posts from "./pages/Posts/Posts";
+import Blogpost from "./pages/Blogpost/Blogpost";
 
 function App() {
-    return (
-        <div className="page-container">
-            <img src={logo} alt="Company logo"/>
-            <h1>Begin hier met het maken van jouw blog-applicatie!</h1>
-        </div>
-    )
+  return (
+    <>
+      <Navbar />
+      <div className="page-container">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/posts" element={<Posts />} />
+          <Route path="/new-post" element={<NewPost />} />
+          <Route path="*" element={<NotFound />} />
+          <Route path="/posts/:id" element={<Blogpost />} />
+        </Routes>
+      </div>
+    </>
+  );
 }
 
-export default App
+export default App;

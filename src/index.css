@@ -1,10 +1,10 @@
 /*In dit bestand plaats je alle algemene styling die geldt voor de gehele applicatie*/
 
 :root {
-  --color-primary: #38E991;
-  --color-secondary: #2C2F39;
-  --color-tertiary: #50535C;
-  --color-white: #FFFFFF;
+  --color-primary: #38e991;
+  --color-secondary: #2c2f39;
+  --color-tertiary: #50535c;
+  --color-white: #ffffff;
 }
 
 * {
@@ -22,9 +22,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  background-color: lightgray;
 }
 
-button, input, select, textarea {
+button,
+input,
+select,
+textarea {
   font-family: inherit;
 }
 
@@ -55,3 +59,4 @@ h4 {
 p {
   margin-block: 0.5em;
 }
+

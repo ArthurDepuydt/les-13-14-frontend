@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { calculateReadTime } from "../../helpers/readTime";
 import "./NewPost.css";
 
+import axios from "axios";
+
 function NewPost() {
   const navigate = useNavigate();
 
@@ -14,6 +16,9 @@ function NewPost() {
   });
 
   const [errors, setErrors] = useState({});
+  const [submitErrors, setSubmitErrors] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [url, setUrl] = useState(null);
 
   function handleChange(e) {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,7 +39,7 @@ function NewPost() {
     return newErrors;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
@@ -53,64 +58,99 @@ function NewPost() {
       shares: 0,
     };
 
-    console.log(post);
-    navigate("/posts");
+    try {
+      const result = await axios.post(
+        "https://novi-backend-api-wgsgz.ondigitalocean.app/api/blogposts",
+        {
+          title: post.title,
+          subtitle: post.subtitle,
+          content: post.content,
+          author: post.author,
+          created: post.created,
+          readTime: post.readTime,
+          comments: post.comments,
+          shares: post.shares,
+        },
+        {
+          headers: {
+            "novi-education-project-id": "0aa01fc3-b0dd-4ad7-9f9e-82b0c9688601",
+          },
+        },
+      );
+      console.log(result);
+      setUrl(`http://localhost:5173/posts/${result.data.id}`);
+      setSuccess(true);
+    } catch (e) {
+      console.error(e);
+      setSubmitErrors(e.message);
+    }
   }
 
   return (
     <div>
       <h1>Nieuwe blogpost</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-field">
-          <label htmlFor="title">Titel</label>
-          <input
-            id="title"
-            name="title"
-            type="text"
-            value={form.title}
-            onChange={handleChange}
-          />
-          {errors.title && <span className="error">{errors.title}</span>}
-        </div>
+      {success == false ? (
+        <form onSubmit={handleSubmit}>
+          <div className="form-field">
+            <label htmlFor="title">Titel</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value={form.title}
+              onChange={handleChange}
+            />
+            {errors.title && <span className="error">{errors.title}</span>}
+          </div>
 
-        <div className="form-field">
-          <label htmlFor="subtitle">Subtitel</label>
-          <input
-            id="subtitle"
-            name="subtitle"
-            type="text"
-            value={form.subtitle}
-            onChange={handleChange}
-          />
-          {errors.subtitle && <span className="error">{errors.subtitle}</span>}
-        </div>
+          <div className="form-field">
+            <label htmlFor="subtitle">Subtitel</label>
+            <input
+              id="subtitle"
+              name="subtitle"
+              type="text"
+              value={form.subtitle}
+              onChange={handleChange}
+            />
+            {errors.subtitle && (
+              <span className="error">{errors.subtitle}</span>
+            )}
+          </div>
 
-        <div className="form-field">
-          <label htmlFor="author">Auteur</label>
-          <input
-            id="author"
-            name="author"
-            type="text"
-            value={form.author}
-            onChange={handleChange}
-          />
-          {errors.author && <span className="error">{errors.author}</span>}
-        </div>
+          <div className="form-field">
+            <label htmlFor="author">Auteur</label>
+            <input
+              id="author"
+              name="author"
+              type="text"
+              value={form.author}
+              onChange={handleChange}
+            />
+            {errors.author && <span className="error">{errors.author}</span>}
+          </div>
 
-        <div className="form-field">
-          <label htmlFor="content">Bericht</label>
-          <textarea
-            id="content"
-            name="content"
-            rows={10}
-            value={form.content}
-            onChange={handleChange}
-          />
-          {errors.content && <span className="error">{errors.content}</span>}
-        </div>
+          <div className="form-field">
+            <label htmlFor="content">Bericht</label>
+            <textarea
+              id="content"
+              name="content"
+              rows={10}
+              value={form.content}
+              onChange={handleChange}
+            />
+            {errors.content && <span className="error">{errors.content}</span>}
+          </div>
 
-        <button type="submit">Verzenden</button>
-      </form>
+          <button type="submit">Verzenden</button>
+
+          {submitErrors && <p className="error">{submitErrors}</p>}
+        </form>
+      ) : (
+        <p>
+          De blogpost is succesvol toegevoegd. Je kunt deze hier
+          <a href={url}> {url} </a> bekijken.
+        </p>
+      )}
     </div>
   );
 }
